@@ -1,0 +1,6 @@
+@DevOpsExmaProject.Identity_HostAddress = http://localhost:5257
+
+GET {{DevOpsExmaProject.Identity_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

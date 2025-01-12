@@ -1,0 +1,6 @@
+@DevOpsExmaProject.ApiGateway_HostAddress = http://localhost:5023
+
+GET {{DevOpsExmaProject.ApiGateway_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
