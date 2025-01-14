@@ -7,14 +7,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevOpsExmaProject.ApiGatewa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevOpsExmaProject.Identity", "DevOpsExmaProject.Identity\DevOpsExmaProject.Identity.csproj", "{4604FBA1-4F13-4801-9FA9-AA47FD0ABD17}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevOpsExmaProject.Mp3Api", "DevOpsExmaProject.MusicApi\DevOpsExmaProject.Mp3Api.csproj", "{A0656EED-3B50-430F-A710-126BAFD9BBA6}"
-EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "devopsexmaproject.ui", "devopsexmaproject.ui\devopsexmaproject.ui.esproj", "{F3CA4E3B-3C5A-4297-96F4-DAB03D63F9A4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{964CFE32-2258-415D-A80B-387D2EB7CAB0}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevOpsExmaProject.Mp3WebApi", "DevOpsExmaProject.Mp3WebApi\DevOpsExmaProject.Mp3WebApi.csproj", "{94C4D89B-4D78-434C-8480-A432AB72F4C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,16 +30,16 @@ Global
 		{4604FBA1-4F13-4801-9FA9-AA47FD0ABD17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4604FBA1-4F13-4801-9FA9-AA47FD0ABD17}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4604FBA1-4F13-4801-9FA9-AA47FD0ABD17}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A0656EED-3B50-430F-A710-126BAFD9BBA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A0656EED-3B50-430F-A710-126BAFD9BBA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A0656EED-3B50-430F-A710-126BAFD9BBA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A0656EED-3B50-430F-A710-126BAFD9BBA6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F3CA4E3B-3C5A-4297-96F4-DAB03D63F9A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F3CA4E3B-3C5A-4297-96F4-DAB03D63F9A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3CA4E3B-3C5A-4297-96F4-DAB03D63F9A4}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{F3CA4E3B-3C5A-4297-96F4-DAB03D63F9A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3CA4E3B-3C5A-4297-96F4-DAB03D63F9A4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F3CA4E3B-3C5A-4297-96F4-DAB03D63F9A4}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{94C4D89B-4D78-434C-8480-A432AB72F4C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94C4D89B-4D78-434C-8480-A432AB72F4C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94C4D89B-4D78-434C-8480-A432AB72F4C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94C4D89B-4D78-434C-8480-A432AB72F4C5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

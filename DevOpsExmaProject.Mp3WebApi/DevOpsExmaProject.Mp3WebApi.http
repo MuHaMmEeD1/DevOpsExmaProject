@@ -1,0 +1,6 @@
+@DevOpsExmaProject.Mp3WebApi_HostAddress = http://localhost:5047
+
+GET {{DevOpsExmaProject.Mp3WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
