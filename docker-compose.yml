@@ -7,9 +7,7 @@ services:
       context: .
       dockerfile: DevOpsExmaProject.ApiGateway/Dockerfile
     ports:
-      - "5001:8080"
-    volumes:
-      - image_volume:/images
+      - "7275:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
 
@@ -19,29 +17,32 @@ services:
       context: .
       dockerfile: DevOpsExmaProject.Identity/Dockerfile
     ports:
-      - "5001:8080"
-    volumes:
-      - image_volume:/images
+      - "7203:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-
 
   mp3api:
-    image: devopsexmaproject.identity:dev
+    image: devopsexmaproject.mp3api:dev
     build:
       context: .
-      dockerfile: DevOpsExmaProject.Identity/Dockerfile
+      dockerfile: DevOpsExmaProject.Mp3Api/Dockerfile
     ports:
-      - "5001:8080"
+      - "7273:8080"
     volumes:
       - image_volume:/images
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
 
-
-
+  reactui:
+    image: devopsexmaproject.ui:latest 
+    build:
+      context: ./DevOpsExmaProject.Ui  
+      dockerfile: Dockerfile 
+    ports:
+      - "3000:80"
+    environment:
+      - NODE_ENV=production
 
 volumes:
   image_volume:
     driver: local
- 
