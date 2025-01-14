@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  apigateway:
+    image: devopsexmaproject.apigateway:dev
+    build:
+      context: .
+      dockerfile: DevOpsExmaProject.ApiGateway/Dockerfile
+    ports:
+      - "5001:8080"
+    volumes:
+      - image_volume:/images
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+
+  identotyapi:
+    image: devopsexmaproject.identity:dev
+    build:
+      context: .
+      dockerfile: DevOpsExmaProject.Identity/Dockerfile
+    ports:
+      - "5001:8080"
+    volumes:
+      - image_volume:/images
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+
+
+  mp3api:
+    image: devopsexmaproject.identity:dev
+    build:
+      context: .
+      dockerfile: DevOpsExmaProject.Identity/Dockerfile
+    ports:
+      - "5001:8080"
+    volumes:
+      - image_volume:/images
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+
+
+
+
+volumes:
+  image_volume:
+    driver: local
+ 

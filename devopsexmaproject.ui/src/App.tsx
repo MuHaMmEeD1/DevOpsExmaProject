@@ -26,9 +26,9 @@ function App() {
       mp3TokenObj.Date = new Date(mp3TokenObj.Date);
 
       const currentTime = new Date();
-      const timeDifference = currentTime.getTime() - mp3TokenObj.Date.getTime();
+      const isTokenExpired = currentTime > mp3TokenObj.Date;
 
-      if (timeDifference >= 0 && timeDifference <= 43_140_000) {
+      if (isTokenExpired) {
         localStorage.removeItem("mp3TokenObj");
         setCheckToken(false);
         document.location.href = "/";

@@ -11,9 +11,6 @@ namespace DevOpsExmaProject.Mp3Api.DataAccess
         }
 
         public DbSet<Mp3> Mp3s { get; set; }
-        public DbSet<User> Users { get; set; }
-
-
 
 
 

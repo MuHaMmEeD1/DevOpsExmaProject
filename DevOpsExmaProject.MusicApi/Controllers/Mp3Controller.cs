@@ -249,8 +249,13 @@ namespace DevOpsExmaProject.Mp3Api.Controllers
         [HttpGet("Mp3Comments")]
         public async Task<IActionResult> Mp3Comments(int mp3Id)
         {
+            if (mp3Id <= 0)
+            {
+                return BadRequest("Invalid mp3Id provided.");
+            }
 
-            return Ok(await _rabbitMQService.GetMp3Comments(mp3Id));
+            var comments = await _rabbitMQService.GetMp3Comments(mp3Id);
+            return Ok(comments);
         }
 
 

@@ -5,5 +5,6 @@
     {
         public string? OwnerUserName { get; set; }
         public string? Comment { get; set; }
+        public string? DateTime { get; set; }
     }
 }

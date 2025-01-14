@@ -14,9 +14,15 @@ const HomePage = () => {
   const [selectedMenu, setSelectedMenu] = useState<string>("Popular");
   const [searchMp3Input, setSearchMp3Input] = useState<string>("");
 
+  const [commentMp3Input, setCommentMp3Input] = useState<string>("");
+  const [selectedMp3Id, setSelectedMp3Id] = useState<number>(-1);
+  const [selectedMp3Name, setSelectedMp3Name] = useState<string>("");
+
+  const [commentList, setCommentList] = useState<GetCommentDto[]>([]);
+
   interface GetMp3Dto {
     id: number;
-    name?: string;
+    name: string;
     likeCount: number;
     imageUrl?: string;
     soundUrl?: string;
@@ -32,6 +38,89 @@ const HomePage = () => {
     Email: string;
     LikeLimit: number;
   }
+
+  interface GetCommentDto {
+    ownerUserName: string;
+    comment: string;
+    dateTime: string;
+  }
+
+  const getComments = async (mp3Id: number) => {
+    try {
+      console.log(mp3Id);
+
+      const response = await axios.get(
+        "https://localhost:7275/mp3/mp3comments",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          params: {
+            mp3Id: mp3Id,
+          },
+        }
+      );
+
+      console.dir(response);
+      setCommentList(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const AddCommentMp3Function = async () => {
+    try {
+      const dto = {
+        UserId: userId,
+        Mp3Id: selectedMp3Id,
+        Comment: commentMp3Input,
+      };
+
+      await axios.post("https://localhost:7275/mp3/addcomment", dto, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const commentMp3InputTeg = document.getElementById(
+        "commentMp3Input"
+      ) as HTMLInputElement;
+      commentMp3InputTeg.value = "";
+      setCommentMp3Input("");
+
+      getComments(selectedMp3Id);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSearchMp3 = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.get("https://localhost:7275/mp3/mp3s", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+        params: { userId: userId, mp3Name: searchMp3Input },
+      });
+
+      setMp3List(response.data);
+      const menuItems = ["menuItemPopular", "menuItemFavorites", "menuItemAll"];
+      menuItems.forEach((itemId) => {
+        const menuItem = document.getElementById(itemId) as HTMLElement;
+        if (menuItem) {
+          menuItem.style.color = "black";
+          menuItem.style.backgroundColor = "white";
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const addLikeMp3Function = async (mp3Id: number) => {
     try {
@@ -83,7 +172,12 @@ const HomePage = () => {
   const selectMenuFunction = async (selectedName: string) => {
     setSelectedMenu(selectedName);
 
-    const menuItems = ["menuItemPopular", "menuItemFavorites", "menuItemAll"];
+    const menuItems = [
+      "menuItemPopular",
+      "menuItemFavorites",
+      "menuItemAll",
+      "menuItemMyMp3",
+    ];
     menuItems.forEach((itemId) => {
       const menuItem = document.getElementById(itemId) as HTMLElement;
       if (menuItem) {
@@ -99,8 +193,6 @@ const HomePage = () => {
       selectedMenuItem.style.color = "white";
       selectedMenuItem.style.backgroundColor = "#007bff";
     }
-
-    console.dir(selectedMenuItem);
 
     try {
       switch (selectedName) {
@@ -128,6 +220,26 @@ const HomePage = () => {
           try {
             const response = await axios.get(
               "https://localhost:7275/mp3/favorites",
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "multipart/form-data",
+                },
+                params: {
+                  userId: userId,
+                },
+              }
+            );
+            console.dir(response);
+            setMp3List(response.data);
+          } catch (error) {
+            console.log("Error Favorite Mp3  " + error);
+          }
+          break;
+        case "MyMp3":
+          try {
+            const response = await axios.get(
+              "https://localhost:7275/mp3/mymp3s",
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -203,6 +315,15 @@ const HomePage = () => {
 
   useEffect(() => {
     getFavoriteMp3s();
+    const commentMp3Input = document.getElementById(
+      "commentMp3Input"
+    ) as HTMLInputElement;
+    const commentMp3Button = document.getElementById(
+      "commentMp3Button"
+    ) as HTMLButtonElement;
+
+    commentMp3Input.disabled = true;
+    commentMp3Button.disabled = true;
   }, []);
 
   const handleAddMp3Submit = async (e: FormEvent<HTMLFormElement>) => {
@@ -302,7 +423,6 @@ const HomePage = () => {
                 <a
                   id="menuItemPopular"
                   className="nav-link"
-                  href="#"
                   style={{
                     color: "white",
                     backgroundColor: "#007bff",
@@ -312,6 +432,7 @@ const HomePage = () => {
                     justifyContent: "center",
                     borderRadius: 5,
                     width: "50%",
+                    cursor: "pointer",
                   }}
                   onClick={(e) => {
                     e.preventDefault();
@@ -323,7 +444,6 @@ const HomePage = () => {
                 <a
                   id="menuItemFavorites"
                   className="nav-link"
-                  href="#"
                   style={{
                     color: "black",
                     padding: 10,
@@ -332,6 +452,7 @@ const HomePage = () => {
                     justifyContent: "center",
                     borderRadius: 5,
                     width: "50%",
+                    cursor: "pointer",
                   }}
                   onClick={(e) => {
                     e.preventDefault();
@@ -339,6 +460,26 @@ const HomePage = () => {
                   }}
                 >
                   Favorites
+                </a>
+                <a
+                  id="menuItemMyMp3"
+                  className="nav-link"
+                  style={{
+                    color: "black",
+                    padding: 10,
+                    fontSize: 20,
+                    display: "flex",
+                    justifyContent: "center",
+                    borderRadius: 5,
+                    width: "50%",
+                    cursor: "pointer",
+                  }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    selectMenuFunction("MyMp3");
+                  }}
+                >
+                  My Mp3
                 </a>
                 <a
                   id="menuItemAll"
@@ -352,6 +493,7 @@ const HomePage = () => {
                     justifyContent: "center",
                     borderRadius: 5,
                     width: "50%",
+                    cursor: "pointer",
                   }}
                   onClick={(e) => {
                     e.preventDefault();
@@ -360,6 +502,33 @@ const HomePage = () => {
                 >
                   All
                 </a>
+
+                <button
+                  style={{
+                    color: "white",
+                    background: "red",
+                    padding: 10,
+                    fontSize: 20,
+                    display: "flex",
+                    justifyContent: "center",
+                    borderRadius: 5,
+                    border: 0,
+                    width: "50%",
+                    marginTop: 20,
+                  }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const confirmation = window.confirm(
+                      "Are you sure you want to log out?"
+                    );
+                    if (confirmation) {
+                      localStorage.removeItem("mp3TokenObj");
+                      document.location.href = "/";
+                    }
+                  }}
+                >
+                  Log Out
+                </button>
               </nav>
             </div>
           </div>
@@ -376,10 +545,59 @@ const HomePage = () => {
             position: "relative",
           }}
         >
-          <form>
-            <input type="text" />
-            <button>Search</button>
-          </form>
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              zIndex: 2,
+
+              marginTop: 15,
+            }}
+          >
+            <form
+              style={{
+                display: "flex",
+                justifyContent: "start",
+                alignItems: "center",
+                padding: 10,
+
+                gap: 10,
+              }}
+              onSubmit={handleSearchMp3}
+            >
+              <input
+                name="searchMp3Input"
+                id="searchMp3Input"
+                placeholder="Search..."
+                type="text"
+                className="form-control"
+                required
+                style={{ width: 300 }}
+                value={searchMp3Input}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  if (e.target.value.length > 23) {
+                    return;
+                  } else {
+                    setSearchMp3Input(e.target.value);
+                  }
+                }}
+              />
+              <button
+                style={{
+                  borderRadius: 3,
+                  border: "0",
+
+                  padding: "6px 20px",
+                  color: "white",
+                  background: "#0d6efd",
+                  fontWeight: "revert",
+                }}
+                type="submit"
+              >
+                Search
+              </button>
+            </form>
+          </div>
 
           <div className="row g-4">
             {mp3List.map((mp3) => (
@@ -393,6 +611,7 @@ const HomePage = () => {
                   justifyContent: "center",
                   alignItems: "center",
                   position: "relative",
+                  paddingTop: 100,
 
                   gap: 0,
                 }}
@@ -456,22 +675,50 @@ const HomePage = () => {
                       >
                         {mp3.name}
                       </h6>
-                      <button
-                        onDoubleClick={() => {
-                          addLikeMp3Function(mp3.id);
-                        }}
-                        style={{
-                          fontSize: 12,
-                          fontWeight: "bold",
-                          position: "relative",
-                          top: 2,
-                          border: "1px solid darkgray",
-                          borderRadius: 3,
-                          height: 25,
-                        }}
-                      >
-                        Like Count: {mp3.likeCount}
-                      </button>
+                      <div>
+                        <button
+                          onClick={() => {
+                            addLikeMp3Function(mp3.id);
+                          }}
+                          style={{
+                            fontSize: 12,
+                            fontWeight: "bold",
+                            position: "relative",
+                            top: 2,
+                            border: "1px solid darkgray",
+                            borderRadius: 3,
+                            height: 25,
+                          }}
+                        >
+                          Like Count: {mp3.likeCount}
+                        </button>
+                        <p
+                          style={{
+                            color: "#0d6efd",
+                            fontSize: 10,
+                            cursor: "pointer",
+                            position: "relative",
+                            top: 10,
+                            left: 12,
+                          }}
+                          onClick={() => {
+                            setSelectedMp3Id(mp3.id);
+                            setSelectedMp3Name(mp3.name);
+                            const commentMp3Input = document.getElementById(
+                              "commentMp3Input"
+                            ) as HTMLInputElement;
+                            const commentMp3Button = document.getElementById(
+                              "commentMp3Button"
+                            ) as HTMLButtonElement;
+
+                            commentMp3Input.disabled = false;
+                            commentMp3Button.disabled = false;
+                            getComments(mp3.id);
+                          }}
+                        >
+                          Comments {">>"}
+                        </p>
+                      </div>
                     </div>
 
                     <div
@@ -485,7 +732,7 @@ const HomePage = () => {
                         controls
                         className=""
                         style={{
-                          width: "320px",
+                          width: "350px",
                           height: "50px",
                           transform: "scale(0.6)",
                         }}
@@ -512,12 +759,7 @@ const HomePage = () => {
           }}
         >
           <div className="card shadow-lg p-4">
-            <h3
-              className="mb-4 text-center"
-              style={{
-                paddingTop: 20,
-              }}
-            >
+            <h3 className="mb-4 text-center" style={{}}>
               Add MP3
             </h3>
             <form
@@ -623,6 +865,106 @@ const HomePage = () => {
 
               <button type="submit" className="btn btn-primary w-100">
                 Add MP3
+              </button>
+            </form>
+          </div>
+
+          <div
+            style={{
+              padding: "10px",
+              position: "absolute",
+              flexDirection: "column",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 3,
+              top: 400,
+            }}
+          >
+            <h3 style={{ marginBottom: "10px", color: "Black" }}>Comments</h3>
+            <p>
+              {">>"} {selectedMp3Name} {"<<"}
+            </p>
+            <div
+              style={{
+                maxHeight: "230px",
+                overflowY: "scroll",
+                width: 365,
+                paddingRight: "10px",
+                marginRight: "-5px",
+                boxSizing: "content-box",
+              }}
+            >
+              {commentList.map((item, index) => (
+                <div
+                  key={index}
+                  style={{
+                    marginBottom: "10px",
+                    padding: "10px",
+                    border: "1px solid #ddd",
+                    borderRadius: "5px",
+                    backgroundColor: "#f9f9f9",
+                  }}
+                >
+                  <strong style={{ color: "#0d6efd" }}>
+                    {item.ownerUserName} - {item.dateTime}
+                  </strong>
+                  <p style={{ margin: "5px 0" }}>{item.comment}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                AddCommentMp3Function();
+              }}
+              style={{
+                display: "flex",
+                justifyContent: "start",
+                alignItems: "center",
+                padding: 10,
+
+                gap: 10,
+                position: "absolute",
+                top: 750,
+                zIndex: 4,
+              }}
+            >
+              <input
+                name="commentMp3Input"
+                id="commentMp3Input"
+                placeholder="Search..."
+                type="text"
+                className="form-control"
+                required
+                style={{ width: 270, opacity: selectedMp3Id === -1 ? 0.5 : 1 }}
+                value={commentMp3Input}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  if (e.target.value.length > 35) {
+                    return;
+                  } else {
+                    setCommentMp3Input(e.target.value);
+                  }
+                }}
+              />
+              <button
+                id="commentMp3Button"
+                style={{
+                  borderRadius: 5,
+                  border: "0",
+                  opacity: selectedMp3Id === -1 ? 0.5 : 1,
+                  cursor: selectedMp3Id === -1 ? "not-allowed" : "pointer",
+                  padding: "5px 20px",
+                  color: "white",
+                  background: "#0d6efd",
+                  fontWeight: "revert",
+                }}
+                type="submit"
+              >
+                Send
               </button>
             </form>
           </div>
