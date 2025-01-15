@@ -13,11 +13,20 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin", policy =>
     {
-        policy.WithOrigins("http://localhost:52669")
+        policy.WithOrigins("http://localhost:5004")
               .AllowAnyMethod()
               .AllowAnyHeader();
     });
 });
+
+//builder.WebHost.ConfigureKestrel(options =>
+//{
+//    options.ListenAnyIP(8080); 
+//    options.ListenAnyIP(443, listenOptions => 
+//    {
+//        listenOptions.UseHttps("app/certificates/certificate.pfx", "yourpassword");
+//    });
+//});
 
 // Ocelot Configuration
 builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);

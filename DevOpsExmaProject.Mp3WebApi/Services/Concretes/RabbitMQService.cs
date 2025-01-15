@@ -16,10 +16,12 @@ namespace DevOpsExmaProject.Mp3WebApi.Services.Concretes
         {
             _configuration = configuration;
 
-            string url = _configuration["RabbitMQ:Url"]!;
             _factory = new ConnectionFactory
             {
-                Uri = new Uri(url)
+                HostName = _configuration["RabbitMQ:HostName"]!,
+                Port = int.Parse(_configuration["RabbitMQ:Port"]!),
+                UserName = _configuration["RabbitMQ:UserName"]!,
+                Password = _configuration["RabbitMQ:Password"]!
             };
         }
 
@@ -112,7 +114,7 @@ namespace DevOpsExmaProject.Mp3WebApi.Services.Concretes
                             });
                         }
 
-                        await channel.BasicAckAsync(result.DeliveryTag, multiple: false); // bu sadece test ucunu
+                        //await channel.BasicAckAsync(result.DeliveryTag, multiple: false); // bu sadece test ucunu
                     }
                     catch (JsonException jsonEx)
                     {

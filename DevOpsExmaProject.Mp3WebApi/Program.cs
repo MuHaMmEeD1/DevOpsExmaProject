@@ -13,25 +13,16 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// Add services to the container
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Db Start
+// DbContext Configuration
+builder.Services.AddDbContext<Mp3DbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DockerConnection")));
 
-builder.Services.AddDbContext<Mp3DbContext>(opt =>
-{
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-
-});
-
-// Db End
-
-// Authentication Start
-
+// Identity Configuration
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
     options.Password.RequireDigit = false;
@@ -40,95 +31,60 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     options.Password.RequireUppercase = false;
     options.Password.RequireLowercase = false;
     options.Password.RequiredUniqueChars = 0;
-
 })
-    .AddEntityFrameworkStores<Mp3DbContext>()
-    .AddDefaultTokenProviders();
+.AddEntityFrameworkStores<Mp3DbContext>()
+.AddDefaultTokenProviders();
 
-
-builder.Services.AddAuthentication(opt =>
+// JWT Authentication
+builder.Services.AddAuthentication(options =>
 {
-
-    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-    .AddJwtBearer(opt => {
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Issuer"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+    };
+});
 
-        opt.TokenValidationParameters = new()
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Issuer"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-
-
-
-        };
-
-
-    });
-
-
-// Authentication End
-
-
-// Data Access Layer (Dal) Start
-
+// Data Access Layer (DAL)
 builder.Services.AddScoped<IUserDal, EFUserDal>();
 builder.Services.AddScoped<IMp3Dal, EFMp3Dal>();
 
-// Data Access Layer (Dal) End 
-
-
-// Service Start
-
+// Services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IMp3Service, Mp3Service>();
 builder.Services.AddScoped<IColudinaryService, CloudinaryService>();
 builder.Services.AddScoped<IRedisService, RedisService>();
 builder.Services.AddScoped<IRabbitMQService, RabbitMQService>();
 
-// Service End
-
-// Singleton Start
-
+// Redis Configuration
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
 {
-    var configuration = sp.GetRequiredService<IConfiguration>();
-    string host = configuration["Redis:Host"]!;
-    int port = int.Parse(configuration["Redis:Port"]!);
-    string user = configuration["Redis:User"]!;
-    string password = configuration["Redis:Password"]!;
-
-    return ConnectionMultiplexer.Connect(new ConfigurationOptions
-    {
-        EndPoints = { { host, port } },
-        User = user,
-        Password = password,
-        AbortOnConnectFail = false,
-        ConnectRetry = 3,
-        ConnectTimeout = 5000
-    });
+    var configuration = ConfigurationOptions.Parse("redis:6379", true);
+    configuration.AbortOnConnectFail = true;
+    return ConnectionMultiplexer.Connect(configuration);
 });
-
-// Singleton End
-
-
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
+// Swagger Configuration (Enabled in Development)
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
+// Middleware Configuration
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
 

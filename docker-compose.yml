@@ -1,48 +1,112 @@
-version: '3.8'
-
+﻿
 services:
+
+
+  redis:
+    image: redis
+    container_name: redis-server
+    ports:
+      - "6379:6379"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq_container
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: mp3db
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${SA_PASSWORD}
+    ports:
+      - "1433:1433"
+    volumes:
+      - mp3db_data:/var/opt/mssql
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "sqlcmd", "-S", "localhost", "-U", "sa", "-P", "${SA_PASSWORD}", "-Q", "SELECT 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+
   apigateway:
     image: devopsexmaproject.apigateway:dev
     build:
       context: .
       dockerfile: DevOpsExmaProject.ApiGateway/Dockerfile
     ports:
-      - "7275:8080"
+      - "5001:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+      - db
+    networks:
+      - backend
 
-  identotyapi:
+  identityapi:
     image: devopsexmaproject.identity:dev
     build:
       context: .
       dockerfile: DevOpsExmaProject.Identity/Dockerfile
     ports:
-      - "7203:8080"
+      - "5002:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=mp3db;Initial Catalog=Mp3Db;User ID=sa;Password=${SA_PASSWORD};Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False
+    depends_on:
+      - db
+    volumes:
+      - dataprotection:/root/.aspnet/DataProtection-Keys
+    networks:
+      - backend
 
   mp3api:
-    image: devopsexmaproject.mp3api:dev
+    image: devopsexmaproject.mp3webapi:dev
     build:
       context: .
-      dockerfile: DevOpsExmaProject.Mp3Api/Dockerfile
+      dockerfile: DevOpsExmaProject.Mp3WebApi/Dockerfile
     ports:
-      - "7273:8080"
+      - "5003:8080"
     volumes:
       - image_volume:/images
+      - dataprotection:/root/.aspnet/DataProtection-Keys
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=mp3db;Initial Catalog=Mp3Db;User ID=sa;Password=${SA_PASSWORD};Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False
+    depends_on:
+      - db
+    networks:
+      - backend
 
   reactui:
-    image: devopsexmaproject.ui:latest 
+    image: devopsexmaproject.ui:latest
     build:
-      context: ./DevOpsExmaProject.Ui  
-      dockerfile: Dockerfile 
+      context: ./DevOpsExmaProject.Ui
+      dockerfile: Dockerfile
     ports:
-      - "3000:80"
+      - "5004:8080"
     environment:
       - NODE_ENV=production
+    networks:
+      - frontend
 
 volumes:
   image_volume:
     driver: local
+  mp3db_data:
+    driver: local
+  dataprotection:
+    driver: local
+
+networks:
+  backend:
+    driver: bridge
+  frontend:
+    driver: bridge

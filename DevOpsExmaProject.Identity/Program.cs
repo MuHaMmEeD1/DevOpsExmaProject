@@ -15,12 +15,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
-// Db Start
+// DbContext Configuration
 builder.Services.AddDbContext<Mp3DbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-// Db End
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DockerConnection")));
 
-// Authentication Start
+// Identity Configuration
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
     options.Password.RequireDigit = false;
@@ -33,6 +32,7 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 .AddEntityFrameworkStores<Mp3DbContext>()
 .AddDefaultTokenProviders();
 
+// JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 .AddJwtBearer(options =>
 {
@@ -47,40 +47,31 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
     };
 });
-// Authentication End
 
-// CORS Start
+// CORS Configuration
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin", policy =>
     {
-        policy.WithOrigins("http://localhost:52669")
+        policy.WithOrigins(builder.Configuration["ClientUrl"]!) // ClientUrl appsettings.json veya ortam de?i?keninden ?ekiliyor
               .AllowAnyMethod()
               .AllowAnyHeader();
     });
 });
-// CORS End
 
-// Data Access Layer (Dal) Start
+// Data Access Layer (Dal)
 builder.Services.AddScoped<IUserDal, EFUserDal>();
-// Data Access Layer (Dal) End
 
-// Service Start
+// Service Layer
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISMTPService, SMTPService>();
-// Service End
 
 var app = builder.Build();
 
-// Use CORS
+// Middleware
 app.UseCors("AllowSpecificOrigin");
-
-// Configure the HTTP request pipeline.
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
