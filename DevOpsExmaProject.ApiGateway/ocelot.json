@@ -2,7 +2,7 @@
   "Routes": [
     {
       "DownstreamPathTemplate": "/Register/SignIn",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -14,7 +14,7 @@
     },
     {
       "DownstreamPathTemplate": "/Register/SignUp",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -26,7 +26,7 @@
     },
     {
       "DownstreamPathTemplate": "/Register/checkEmail",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -38,7 +38,7 @@
     },
     {
       "DownstreamPathTemplate": "/Register/checkSMTP",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -50,7 +50,7 @@
     },
     {
       "DownstreamPathTemplate": "/Mp3/Add",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -62,7 +62,7 @@
     },
     {
       "DownstreamPathTemplate": "/Mp3/Mp3s",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -74,7 +74,7 @@
     },
     {
       "DownstreamPathTemplate": "/Mp3/Popular",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -86,7 +86,7 @@
     },
     {
       "DownstreamPathTemplate": "/Mp3/AddLikeMp3",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -98,7 +98,7 @@
     },
     {
       "DownstreamPathTemplate": "/Mp3/MyMp3s",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -110,7 +110,7 @@
     },
     {
       "DownstreamPathTemplate": "/Mp3/Favorites",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -122,7 +122,7 @@
     },
     {
       "DownstreamPathTemplate": "/Mp3/AddComment",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -134,7 +134,7 @@
     },
     {
       "DownstreamPathTemplate": "/Mp3/Mp3Comments",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -146,7 +146,7 @@
     },
     {
       "DownstreamPathTemplate": "/Mp3/ChangeFavorite",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -158,6 +158,6 @@
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:5001"
+    "BaseUrl": "http://localhost:5001"
   }
 }

@@ -50,7 +50,7 @@ const HomePage = () => {
       console.log(mp3Id);
 
       const response = await axios.get(
-        "https://localhost:7275/mp3/mp3comments",
+        "http://localhost:5001/mp3/mp3comments",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -77,7 +77,7 @@ const HomePage = () => {
         Comment: commentMp3Input,
       };
 
-      await axios.post("https://localhost:7275/mp3/addcomment", dto, {
+      await axios.post("http://localhost:5001/mp3/addcomment", dto, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -100,7 +100,7 @@ const HomePage = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.get("https://localhost:7275/mp3/mp3s", {
+      const response = await axios.get("http://localhost:5001/mp3/mp3s", {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -130,7 +130,7 @@ const HomePage = () => {
         const mp3TokenObj = JSON.parse(mp3TokenObjString) as Mp3Token;
 
         if (mp3TokenObj.LikeLimit != 0) {
-          await axios.post("https://localhost:7275/mp3/addlikemp3", null, {
+          await axios.post("http://localhost:5001/mp3/addlikemp3", null, {
             headers: {
               Authorization: `Bearer ${token}`,
               "Content-Type": "multipart/form-data",
@@ -152,7 +152,7 @@ const HomePage = () => {
 
   const addFavoriteMp3Function = async (mp3Id: number) => {
     try {
-      await axios.post("https://localhost:7275/mp3/changefavorite", null, {
+      await axios.post("http://localhost:5001/mp3/changefavorite", null, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -199,7 +199,7 @@ const HomePage = () => {
         case "Popular":
           try {
             const response = await axios.get(
-              "https://localhost:7275/mp3/popular",
+              "http://localhost:5001/mp3/popular",
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -219,7 +219,7 @@ const HomePage = () => {
         case "Favorites":
           try {
             const response = await axios.get(
-              "https://localhost:7275/mp3/favorites",
+              "http://localhost:5001/mp3/favorites",
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -239,7 +239,7 @@ const HomePage = () => {
         case "MyMp3":
           try {
             const response = await axios.get(
-              "https://localhost:7275/mp3/mymp3s",
+              "http://localhost:5001/mp3/mymp3s",
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -258,18 +258,15 @@ const HomePage = () => {
           break;
         case "All":
           try {
-            const response = await axios.get(
-              "https://localhost:7275/mp3/mp3s",
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                  "Content-Type": "multipart/form-data",
-                },
-                params: {
-                  userId: userId,
-                },
-              }
-            );
+            const response = await axios.get("http://localhost:5001/mp3/mp3s", {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "multipart/form-data",
+              },
+              params: {
+                userId: userId,
+              },
+            });
             console.dir(response);
             setMp3List(response.data);
           } catch (error) {
@@ -294,7 +291,7 @@ const HomePage = () => {
       setUserId(mp3TokenObj.UserId);
 
       try {
-        const response = await axios.get("https://localhost:7275/mp3/popular", {
+        const response = await axios.get("http://localhost:5001/mp3/popular", {
           headers: {
             Authorization: `Bearer ${mp3TokenObj.Token}`,
             "Content-Type": "multipart/form-data",
@@ -349,7 +346,7 @@ const HomePage = () => {
         }
 
         const response = await axios.post(
-          "https://localhost:7275/mp3/add",
+          "http://localhost:5001/mp3/add",
           formData,
           {
             headers: {

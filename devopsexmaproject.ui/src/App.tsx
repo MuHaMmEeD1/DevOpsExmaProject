@@ -2,8 +2,8 @@ import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import SignUpPage from "./pages/SignUpPage";
 import SignInPage from "./pages/SignInPage";
-import { useEffect, useState } from "react";
 import HomePage from "./pages/HomePage";
+import { useEffect, useState } from "react";
 
 function App() {
   const [checkToken, setCheckToken] = useState(false);
@@ -38,6 +38,7 @@ function App() {
     } else {
       setCheckToken(false);
     }
+    console.log("Token  :  ", checkToken);
   }, []);
 
   return (
@@ -53,6 +54,7 @@ function App() {
           <Route path="/SignUp" element={<SignUpPage />} />
         </Routes>
       )}
+      (<h1>Test Ok 200</h1>)
     </>
   );
 }

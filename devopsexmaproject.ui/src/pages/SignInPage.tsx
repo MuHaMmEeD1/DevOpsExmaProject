@@ -39,7 +39,7 @@ const SignInPage = () => {
         Password: password,
       };
       const response = await axios.post(
-        `https://localhost:7275/auth/signin`,
+        `http://localhost:5001/auth/signin`,
         dto,
         {
           headers: {

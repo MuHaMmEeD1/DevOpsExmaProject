@@ -43,7 +43,7 @@ const SignUpPage = () => {
     } else {
       try {
         const responseEmail = await axios.get(
-          `https://localhost:7275/auth/checkemail`,
+          `http://localhost:5001/auth/checkemail`,
           {
             params: { email: email },
           }
@@ -127,7 +127,7 @@ const SignUpPage = () => {
           Email: email,
         };
         const responseSMTP = await axios.post(
-          `https://localhost:7275/auth/checksmtp`,
+          `http://localhost:5001/auth/checksmtp`,
           dto,
           {
             headers: {
@@ -149,7 +149,7 @@ const SignUpPage = () => {
           Email: email,
           Password: password,
         };
-        await axios.post(`https://localhost:7275/auth/signup`, dto, {
+        await axios.post(`http://localhost:5001/auth/signup`, dto, {
           headers: {
             "Content-Type": "application/json",
           },

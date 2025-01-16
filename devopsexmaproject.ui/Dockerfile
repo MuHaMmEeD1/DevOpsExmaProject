@@ -1,15 +1,18 @@
-FROM node:18 AS build
+FROM node:18-alpine
+
 
 WORKDIR /app
 
-COPY package*.json ./
+
+COPY devopsexmaproject.ui/package*.json ./
+
 
 RUN npm install
 
+
 COPY . .
 
-RUN npm run build
 
-RUN npm install -g serve
+EXPOSE 3000
 
-CMD ["serve", "-s", "build", "-l", "5004", "--single"]
+CMD ["npm", "run", "dev", "--", "--host"]
