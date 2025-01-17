@@ -7,6 +7,7 @@ using DevOpsExmaProject.Mp3WebApi.Services.Concretes;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 using System.Text;
@@ -18,9 +19,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// DbContext Configuration
+// DbContext Configuration - PostgreSQL i?in yap?land?rma
 builder.Services.AddDbContext<Mp3DbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DockerConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Identity Configuration
 builder.Services.AddIdentity<User, IdentityRole>(options =>
@@ -65,6 +66,7 @@ builder.Services.AddScoped<IMp3Service, Mp3Service>();
 builder.Services.AddScoped<IColudinaryService, CloudinaryService>();
 builder.Services.AddScoped<IRedisService, RedisService>();
 builder.Services.AddScoped<IRabbitMQService, RabbitMQService>();
+builder.Services.AddScoped<IFileService, FileService>();
 
 // Redis Configuration
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
@@ -77,16 +79,20 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
 var app = builder.Build();
 
 // Swagger Configuration (Enabled in Development)
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
 
 // Middleware Configuration
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
+
+
 app.UseAuthentication();
 app.UseAuthorization();
+
+
 
 app.MapControllers();
 

@@ -54,7 +54,6 @@ function App() {
           <Route path="/SignUp" element={<SignUpPage />} />
         </Routes>
       )}
-      (<h1>Test Ok 200</h1>)
     </>
   );
 }

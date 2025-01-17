@@ -31,6 +31,8 @@ namespace DevOpsExmaProject.Identity.Controllers
             _configuration = configuration;
         }
 
+     
+
         [HttpPost("signin")]
         public async Task<IActionResult> SignIn(SignInDto dto)
         {

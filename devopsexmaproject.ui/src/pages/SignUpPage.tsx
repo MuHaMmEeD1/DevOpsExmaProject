@@ -41,19 +41,28 @@ const SignUpPage = () => {
         return false;
       }
     } else {
+      interface CheckEmailResponse {
+        isAvailable: boolean;
+      }
+
       try {
-        const responseEmail = await axios.get(
+        const responseEmail = await axios.get<CheckEmailResponse>(
           `http://localhost:5001/auth/checkemail`,
           {
             params: { email: email },
           }
         );
-        if (responseEmail.data) {
+
+        if (responseEmail.data?.isAvailable === false) {
           setErrorMessage("Bu Email əvəlcə istifaidə olunub!!!");
           return false;
         }
+
+        setErrorMessage("");
+        return true;
       } catch (error) {
         console.error("Error during email validation", error);
+        return false;
       }
     }
 

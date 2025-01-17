@@ -546,8 +546,8 @@ const HomePage = () => {
             style={{
               position: "fixed",
               top: 0,
+              left: 225.8,
               zIndex: 2,
-
               marginTop: 15,
             }}
           >

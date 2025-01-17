@@ -1,0 +1,6 @@
+@DevOpsExmaProject.IdentityApi_HostAddress = http://localhost:5032
+
+GET {{DevOpsExmaProject.IdentityApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

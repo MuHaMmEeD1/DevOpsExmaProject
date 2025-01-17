@@ -21,8 +21,9 @@ namespace DevOpsExmaProject.Mp3WebApi.Controllers
         private readonly IColudinaryService _coludinaryService;
         private readonly IRedisService _redisService;
         private readonly IRabbitMQService _rabbitMQService;
+        private readonly IFileService _fileService;
 
-        public Mp3Controller(IUserService userService, IMp3Service mp3Service, IConfiguration configuration, IColudinaryService coludinaryService, IRedisService redisService, IRabbitMQService rabbitMQService)
+        public Mp3Controller(IUserService userService, IMp3Service mp3Service, IConfiguration configuration, IColudinaryService coludinaryService, IRedisService redisService, IRabbitMQService rabbitMQService, IFileService fileService)
         {
             _userService = userService;
             _mp3Service = mp3Service;
@@ -30,29 +31,41 @@ namespace DevOpsExmaProject.Mp3WebApi.Controllers
             _coludinaryService = coludinaryService;
             _redisService = redisService;
             _rabbitMQService = rabbitMQService;
+            _fileService = fileService;
         }
 
         [HttpPost("Add")]
         public async Task<IActionResult> Add(AddMp3Dto dto)
         {
-
-
-            Mp3 mp3 = new Mp3()
+            try
             {
-                Name = dto.Name,
-                ImageUrl = await _coludinaryService.UploadImageAsync(new ClodinaryAddFile() { File = dto.ImageFile }),
-                SoundUrl = await _coludinaryService.UploadMp3Async(new ClodinaryAddFile() { File = dto.Mp3File }),
-                UserId = dto.UserId,
-                LikeCount = 0,
+                Mp3 mp3 = new Mp3()
+                {
+                    Name = dto.Name,
+                    ImageUrl = await _fileService.UploadImageAsync(new LocalAddFile() { File = dto.ImageFile }),
+                    SoundUrl = await _coludinaryService.UploadMp3Async(new ClodinaryAddFile() { File = dto.Mp3File }),
+                    UserId = dto.UserId,
+                    LikeCount = 0,
+                };
 
-            };
+                await _mp3Service.AddAsync(mp3);
 
-            await _mp3Service.AddAsync(mp3);
-
-
-
-            return Ok("true");
+                return Ok("true");
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest($"File upload error: {ex.Message}");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(403, $"Permission error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
+
 
 
         [HttpGet("Mp3s")]
@@ -131,7 +144,7 @@ namespace DevOpsExmaProject.Mp3WebApi.Controllers
 
             var top10Mp3 = mp3List
                 .OrderByDescending(m => m.LikeCount)
-                .Take(10)
+                .Take(8)
                 .ToList();
 
             List<GetMp3Dto> list = new();
